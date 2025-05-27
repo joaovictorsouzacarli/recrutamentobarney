@@ -111,13 +111,6 @@ export default function BarneySystem() {
                 apropriados, preencha nosso formulário de entrada:
               </p>
 
-              <div className="bg-purple-600/20 p-4 rounded-lg border border-purple-500/50 mb-4">
-                <p className="text-purple-300 font-semibold mb-2">🔗 Link de Entrada:</p>
-                <div className="bg-[#2f3136] p-3 rounded font-mono text-purple-400 text-center">
-                  https://barney-albion.com/entrada
-                </div>
-              </div>
-
               <div className="space-y-2 text-gray-300 text-sm">
                 <p>
                   📋 <strong>O que você vai preencher:</strong>
@@ -156,13 +149,6 @@ export default function BarneySystem() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
         <div className="w-full max-w-2xl space-y-4">
-          {/* URL do formulário */}
-          <div className="bg-slate-800/50 p-3 rounded-lg border border-slate-600/50 text-center">
-            <p className="text-slate-300 text-sm">
-              🌐 <span className="text-purple-400 font-mono">https://barney-albion.com/entrada</span>
-            </p>
-          </div>
-
           <Card className="bg-slate-800/90 border-purple-500/20 backdrop-blur-sm">
             <CardHeader className="text-center space-y-4">
               <div className="mx-auto w-24 h-24 rounded-full overflow-hidden bg-purple-600 flex items-center justify-center">
