@@ -16,6 +16,7 @@ export default function BarneySystem() {
   const [currentView, setCurrentView] = useState<"channel" | "form" | "confirmation" | "admin">("channel")
   const [formData, setFormData] = useState({
     nickname: "",
+    discordName: "",
     guild: "",
     interests: [] as string[],
   })
@@ -56,6 +57,11 @@ export default function BarneySystem() {
               {
                 name: "🎮 Nick no Albion",
                 value: data.nickname,
+                inline: true,
+              },
+              {
+                name: "💬 Nome no Discord",
+                value: data.discordName,
                 inline: true,
               },
               {
@@ -112,7 +118,6 @@ export default function BarneySystem() {
     const submissionData = {
       ...formData,
       timestamp: new Date().toLocaleString("pt-BR"),
-      discordUser: "player123#1234",
     }
 
     // Enviar para Discord
@@ -174,6 +179,7 @@ export default function BarneySystem() {
                   📋 <strong>O que você vai preencher:</strong>
                 </p>
                 <p>• Seu nick no Albion Online</p>
+                <p>• Seu nome no Discord</p>
                 <p>• Guild atual (se tiver)</p>
                 <p>• Tipos de conteúdo que te interessam</p>
               </div>
@@ -249,6 +255,23 @@ export default function BarneySystem() {
                 </div>
 
                 <div className="space-y-2">
+                  <Label htmlFor="discordName" className="text-slate-200 font-medium">
+                    Seu nome no Discord *
+                  </Label>
+                  <Input
+                    id="discordName"
+                    placeholder="Ex: usuario123 ou @usuario123"
+                    value={formData.discordName}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, discordName: e.target.value }))}
+                    className="bg-slate-700/50 border-slate-600 text-slate-100 placeholder:text-slate-400 focus:border-purple-500"
+                    required
+                  />
+                  <p className="text-slate-400 text-xs">
+                    💡 Digite seu nome de usuário do Discord (sem o #1234 se tiver)
+                  </p>
+                </div>
+
+                <div className="space-y-2">
                   <Label htmlFor="guild" className="text-slate-200 font-medium">
                     Guild que veio
                   </Label>
@@ -290,7 +313,7 @@ export default function BarneySystem() {
                 <Button
                   type="submit"
                   className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold py-3 text-lg"
-                  disabled={!formData.nickname || formData.interests.length === 0}
+                  disabled={!formData.nickname || !formData.discordName || formData.interests.length === 0}
                 >
                   🦕 Enviar para o Barney
                 </Button>
@@ -356,7 +379,10 @@ export default function BarneySystem() {
               <p className="text-green-300 font-semibold mb-2">📋 Resumo da sua solicitação:</p>
               <div className="text-left space-y-2 text-slate-300">
                 <p>
-                  <strong>Nick:</strong> {submittedData?.nickname}
+                  <strong>Nick Albion:</strong> {submittedData?.nickname}
+                </p>
+                <p>
+                  <strong>Discord:</strong> {submittedData?.discordName}
                 </p>
                 <p>
                   <strong>Guild:</strong> {submittedData?.guild || "Sem guild"}
@@ -438,10 +464,14 @@ export default function BarneySystem() {
               <Badge className="bg-red-600/20 text-red-300 border-red-500/50">PENDENTE</Badge>
             </h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
               <div>
                 <p className="text-gray-400 text-sm font-semibold">🎮 Nick no Albion</p>
                 <p className="text-white text-lg">{submittedData?.nickname}</p>
+              </div>
+              <div>
+                <p className="text-gray-400 text-sm font-semibold">💬 Discord</p>
+                <p className="text-white text-lg">{submittedData?.discordName}</p>
               </div>
               <div>
                 <p className="text-gray-400 text-sm font-semibold">⚔️ Guild</p>
@@ -468,6 +498,20 @@ export default function BarneySystem() {
                     {roleMapping[interest]}
                   </Badge>
                 ))}
+              </div>
+            </div>
+
+            <div className="mb-4 p-3 bg-blue-600/20 rounded border border-blue-500/50">
+              <p className="text-blue-300 text-sm font-semibold mb-2">📝 Instruções para o Admin:</p>
+              <div className="text-blue-200 text-sm space-y-1">
+                <p>
+                  1. Procure o usuário <strong>{submittedData?.discordName}</strong> no servidor
+                </p>
+                <p>
+                  2. Verifique se o nick <strong>{submittedData?.nickname}</strong> existe no Albion
+                </p>
+                <p>3. Adicione os cargos listados acima ao usuário</p>
+                <p>4. Envie mensagem de boas-vindas (opcional)</p>
               </div>
             </div>
 
