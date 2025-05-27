@@ -9,18 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
-import {
-  Sword,
-  Target,
-  Users,
-  Zap,
-  Pickaxe,
-  MoreHorizontal,
-  MessageSquare,
-  UserCheck,
-  Clock,
-  CheckCircle,
-} from "lucide-react"
+import { Sword, Target, Users, Zap, Pickaxe, MoreHorizontal, MessageSquare, UserCheck, Clock } from "lucide-react"
 import Image from "next/image"
 
 export default function BarneySystem() {
@@ -51,6 +40,65 @@ export default function BarneySystem() {
     outros: "@Outros",
   }
 
+  // Função para enviar para Discord
+  const sendToDiscord = async (data: any) => {
+    // SUBSTITUA PELA SUA URL DO WEBHOOK
+    const webhookUrl = "https://discord.com/api/webhooks/1376900291437531136/jU9gKJ2zs_B_buN-K8gvs6jiAsc3xfjuq48fHeM2k-0QLLDA3HKuyTEML50RySQvPkaj"
+
+    try {
+      const discordMessage = {
+        embeds: [
+          {
+            title: "🦕 Nova Solicitação - Barney e Seus Amigos",
+            description: "Um novo amiguinho quer entrar no servidor!",
+            color: 0x7c3aed, // Cor roxa
+            fields: [
+              {
+                name: "🎮 Nick no Albion",
+                value: data.nickname,
+                inline: true,
+              },
+              {
+                name: "⚔️ Guild",
+                value: data.guild || "Sem guild",
+                inline: true,
+              },
+              {
+                name: "📋 Interesses",
+                value: data.interests.map((i: string) => contentOptions.find((opt) => opt.id === i)?.label).join(", "),
+                inline: false,
+              },
+              {
+                name: "🏷️ Cargos para Adicionar",
+                value: data.interests.map((i: string) => roleMapping[i]).join(", "),
+                inline: false,
+              },
+            ],
+            footer: {
+              text: `Solicitação enviada em ${new Date().toLocaleString("pt-BR")}`,
+            },
+            thumbnail: {
+              url: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Barney_Head_Body-OaC1eKSW3JXZLDDyjblRkddTdKJTMw.webp", // Logo do Barney
+            },
+          },
+        ],
+      }
+
+      const response = await fetch(webhookUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(discordMessage),
+      })
+
+      return response.ok
+    } catch (error) {
+      console.error("Erro ao enviar para Discord:", error)
+      return false
+    }
+  }
+
   const handleInterestChange = (interestId: string, checked: boolean) => {
     setFormData((prev) => ({
       ...prev,
@@ -58,14 +106,24 @@ export default function BarneySystem() {
     }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setSubmittedData({
+
+    const submissionData = {
       ...formData,
       timestamp: new Date().toLocaleString("pt-BR"),
       discordUser: "player123#1234",
-    })
-    setCurrentView("confirmation")
+    }
+
+    // Enviar para Discord
+    const success = await sendToDiscord(submissionData)
+
+    if (success) {
+      setSubmittedData(submissionData)
+      setCurrentView("confirmation")
+    } else {
+      alert("Erro ao enviar solicitação. Tente novamente.")
+    }
   }
 
   // 1. Canal do Discord com link fixo
@@ -343,7 +401,7 @@ export default function BarneySystem() {
     )
   }
 
-  // 4. Painel do Admin
+  // 4. Painel do Admin (simulação)
   return (
     <div className="min-h-screen bg-[#36393f] p-4">
       <div className="max-w-4xl mx-auto space-y-4">
@@ -356,7 +414,7 @@ export default function BarneySystem() {
           <p className="text-gray-400 text-sm">Canal privado - Apenas equipe do Barney</p>
         </div>
 
-        {/* Nova solicitação */}
+        {/* Simulação da mensagem que chegaria */}
         <div className="bg-[#2f3136] p-4 rounded-lg border-l-4 border-purple-500">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-12 h-12 rounded-full overflow-hidden bg-purple-600 flex items-center justify-center">
@@ -413,32 +471,10 @@ export default function BarneySystem() {
               </div>
             </div>
 
-            <div className="mb-4 p-3 bg-blue-600/20 rounded border border-blue-500/50">
-              <p className="text-blue-300 text-sm font-semibold mb-2">📝 Instruções para o Admin:</p>
-              <div className="text-blue-200 text-sm space-y-1">
-                <p>1. Verifique se o nick existe no Albion Online</p>
-                <p>2. Adicione os cargos listados acima ao usuário</p>
-                <p>3. Envie mensagem de boas-vindas (opcional)</p>
-                <p>4. Marque como processado</p>
-              </div>
-            </div>
-
             <div className="mb-4 p-3 bg-purple-600/20 rounded border border-purple-500/50">
               <p className="text-purple-300 text-sm text-center">
                 🎵 <em>"Mais um amiguinho quer se juntar à nossa família!"</em> 🎵
               </p>
-            </div>
-
-            <div className="flex gap-3 mt-4">
-              <Button className="bg-green-600 hover:bg-green-700 flex items-center gap-2">
-                <CheckCircle className="w-4 h-4" />🦕 Aprovar e Dar Cargos
-              </Button>
-              <Button variant="outline" className="border-yellow-500/50 text-yellow-400">
-                ⏸️ Analisar Depois
-              </Button>
-              <Button variant="outline" className="border-red-500/50 text-red-400">
-                ❌ Rejeitar
-              </Button>
             </div>
 
             <p className="text-gray-500 text-xs mt-3">Solicitação recebida em {submittedData?.timestamp}</p>
